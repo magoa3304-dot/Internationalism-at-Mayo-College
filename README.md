@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>Internationalism at Mayo College</title>
+
+<!-- PWA App Install -->
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#0d1117" />
+
+<!-- Icons for iPhone -->
+<link rel="apple-touch-icon" href="icon-512.png" />
+
+<!-- Leaflet CSS -->
+<link 
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@600;800&display=swap" rel="stylesheet"/>
+
+<style>
+/* ============================================================
+   GLOBAL DARK THEME
+============================================================ */
+:root{
+  --bg:#0d1117;
+  --card:#161b22;
+  --text:#e6edf3;
+  --muted:#8b949e;
+  --highlight:#f4c063;
+  --border:#222;
+  --max-width:1250px;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter, sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ============================================================
+   TOPBAR — Sticky & Fading on Scroll
+============================================================ */
+.topbar{
+  position:sticky;
+  top:0;
+  width:100%;
+  z-index:2000;
+  background:var(--bg);
+  border-bottom:1px solid var(--border);
+  padding:12px 18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  transition:opacity .25s ease;
+}
+
+.tab-container{
+  display:flex;
+  gap:12px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.tab-container::-webkit-scrollbar{display:none;}
+
+.tab{
+  background:none;
+  border:none;
+  padding:9px 14px;
+  border-radius:8px;
+  font-size:14px;
+  font-weight:600;
+  white-space:nowrap;
+  color:var(--muted);
+  cursor:pointer;
+  transition:0.25s;
+}
+.tab:hover{
+  color:var(--highlight);
+  transform:translateY(-2px);
+}
+.tab.active{
+  background:var(--highlight);
+  color:#000;
+}
+
+/* ============================================================
+   CONTROLS
+============================================================ */
+.controls{
+  display:flex; gap:8px; align-items:center;
+}
+.control-btn{
+  background:var(--card);
+  border:1px solid var(--border);
+  color:var(--text);
+  padding:8px 12px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
+}
+.control-btn:hover{
+  background:#1f2730;
+}
+
+/* ============================================================
+   SEARCH BAR
+============================================================ */
+.search-wrap{
+  max-width:var(--max-width);
+  margin:18px auto 0;
+  padding:0 18px;
+}
+#searchInput{
+  width:100%;
+  padding:12px 16px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--card);
+  color:var(--text);
+  font-size:15px;
+}
+#searchMessage{
+  margin-top:6px;
+  font-size:14px;
+  color:#ff6b6b;
+}
+
+/* ============================================================
+   HERO SECTION
+============================================================ */
+.hero{
+  max-width:var(--max-width);
+  margin:25px auto;
+  padding:0 18px;
+}
+.hero h1{
+  font-family:"Playfair Display",serif;
+  font-size:38px;
+  color:var(--highlight);
+  margin:0;
+}
+.hero p{
+  margin-top:10px;
+  color:var(--muted);
+  font-size:16px;
+  line-height:1.6;
+}
+
+/* ============================================================
+   MAP
+============================================================ */
+.map-wrap{
+  position:relative;
+  display:flex;
+  justify-content:center;
+  margin:12px 0;
+}
+
+#map{
+  width:94%;
+  max-width:var(--max-width);
+  height:78vh;
+  border-radius:14px;
+  border:2px solid var(--border);
+  background:#111;
+}
+
+/* RESET MAP BUTTON */
+.reset-map{
+  position:absolute;
+  right:32px;
+  top:85px; /* directly under zoom buttons */
+  z-index:9000;
+  width:38px;
+  height:38px;
+  border-radius:10px;
+  background:var(--card);
+  border:1px solid var(--border);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  cursor:pointer;
+  font-size:22px;
+}
+.reset-map:hover{transform:scale(1.12);}
+
+/* ============================================================
+   EVENTS LIST
+============================================================ */
+.event-section{
+  max-width:var(--max-width);
+  margin:28px auto 90px;
+  padding:0 18px;
+}
+.group{
+  display:none;
+}
+.group.active{
+  display:block;
+}
+
+.event-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  padding:14px;
+  border-radius:10px;
+  margin-bottom:12px;
+  cursor:pointer;
+  transition:0.25s;
+}
+.event-card:hover{
+  background:#1d2430;
+  transform:translateY(-5px);
+}
+.event-card h3{
+  margin:0;
+  color:var(--highlight);
+  font-family:"Playfair Display",serif;
+}
+.location{
+  margin-top:4px;
+  font-size:13px;
+  color:#58a6ff;
+}
+
+/* ============================================================
+   FILTER POPUP
+============================================================ */
+#filterModal{
+  position:fixed;
+  inset:0;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  background:rgba(0,0,0,0.6);
+  z-index:5000;
+}
+#filterBox{
+  width:92%;
+  max-width:420px;
+  background:var(--card);
+  padding:20px;
+  border-radius:14px;
+  border:1px solid var(--border);
+}
+#filterList label{
+  display:block;
+  margin-bottom:12px;
+  color:var(--text);
+  font-size:15px;
+  font-weight:500;
+}
+
+/* ============================================================
+   ACTIVE PIN STYLE (highlight)
+============================================================ */
+.leaflet-marker-icon.active{
+  transform:scale(1.15);
+  filter:drop-shadow(0 0 10px rgba(255,255,255,0.45));
+}
+
+/* ============================================================
+   SCROLL FADE FOR TOPBAR
+============================================================ */
+.fade-out{opacity:0.25;}
+</style>
+</head>
+
+<body>
+
+<!-- ============================================================
+     TOPBAR
+============================================================ -->
+<div class="topbar" id="topbar">
+  <div class="tab-container" id="tabBar"></div>
+
+  <div class="controls">
+    <button class="control-btn" id="filterBtn">Filter</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     SEARCH BAR
+============================================================ -->
+<div class="search-wrap">
+  <input id="searchInput" placeholder="Search anything… (All Categories)">
+  <div id="searchMessage"></div>
+</div>
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section class="hero">
+  <h1>Internationalism at Mayo College</h1>
+  <p>
+    Transcending borders worldwide, the travel experiences Mayo offers broaden our
+    children's horizons and cultivate a global outlook that sees the world as one
+    vast, interconnected family.
+  </p>
+</section>
+
+<!-- ============================================================
+     MAP + RESET BUTTON
+============================================================ -->
+<div class="map-wrap">
+  <div id="map"></div>
+  <div class="reset-map" id="resetMap">⟳</div>
+</div>
+
+<!-- ============================================================
+     EVENTS SECTION
+============================================================ -->
+<div class="event-section" id="eventSection"></div>
+
+<!-- ============================================================
+     FILTER POPUP
+============================================================ -->
+<div id="filterModal">
+  <div id="filterBox">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <h3 style="margin:0;color:var(--highlight)">Filter Categories</h3>
+      <button id="closeFilter" style="background:none;border:none;color:var(--text);font-size:22px;cursor:pointer;">✖</button>
+    </div>
+
+    <div id="filterList" style="margin-top:12px;"></div>
+
+    <div style="margin-top:15px;display:flex;gap:10px;">
+      <button class="control-btn" style="flex:1;" id="applyFilters">Apply</button>
+      <button class="control-btn" style="flex:1;" id="resetFilters">Reset</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PIN SVG DEFINITIONS (CLASSIC GOOGLE STYLE)
+============================================================ -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+
+    <!-- RED -->
+    <g id="pin-red">
+      <svg width="26" height="42" viewBox="0 0 26 42">
+        <path d="M13 0C5.8 0 0 5.8 0 13c0 10.6 13 29 13 29s13-18.4 13-29C26 5.8 20.2 0 13 0z"
+              fill="#EA4335" stroke="black" stroke-width="2"/>
+        <circle cx="13" cy="13" r="6" fill="white" stroke="black" stroke-width="2"/>
+      </svg>
+    </g>
+
+    <!-- ORANGE -->
+    <g id="pin-orange">
+      <svg width="26" height="42" viewBox="0 0 26 42">
+        <path d="M13 0C5.8 0 0 5.8 0 13c0 10.6 13 29 13 29s13-18.4 13-29C26 5.8 20.2 0 13 0z"
+              fill="#FB8C00" stroke="black" stroke-width="2"/>
+        <circle cx="13" cy="13" r="6" fill="white" stroke="black" stroke-width="2"/>
+      </svg>
+    </g>
+
+    <!-- GREEN -->
+    <g id="pin-green">
+      <svg width="26" height="42" viewBox="0 0 26 42">
+        <path d="M13 0C5.8 0 0 5.8 0 13c0 10.6 13 29 13 29s13-18.4 13-29C26 5.8 20.2 0 13 0z"
+              fill="#34A853" stroke="black" stroke-width="2"/>
+        <circle cx="13" cy="13" r="6" fill="white" stroke="black" stroke-width="2"/>
+      </svg>
+    </g>
+
+    <!-- WHITE -->
+    <g id="pin-white">
+      <svg width="26" height="42" viewBox="0 0 26 42">
+        <path d="M13 0C5.8 0 0 5.8 0 13c0 10.6 13 29 13 29s13-18.4 13-29C26 5.8 20.2 0 13 0z"
+              fill="white" stroke="black" stroke-width="2"/>
+        <circle cx="13" cy="13" r="6" fill="white" stroke="black" stroke-width="2"/>
+      </svg>
+    </g>
+
+    <!-- BLUE -->
+    <g id="pin-blue">
+      <svg width="26" height="42" viewBox="0 0 26 42">
+        <path d="M13 0C5.8 0 0 5.8 0 13c0 10.6 13 29 13 29s13-18.4 13-29C26 5.8 20.2 0 13 0z"
+              fill="#4285F4" stroke="black" stroke-width="2"/>
+        <circle cx="13" cy="13" r="6" fill="white" stroke="black" stroke-width="2"/>
+      </svg>
+    </g>
+
+    <!-- PURPLE -->
+    <g id="pin-purple">
+      <svg width="26" height="42" viewBox="0 0 26 42">
+        <path d="M13 0C5.8 0 0 5.8 0 13c0 10.6 13 29 13 29s13-18.4 13-29C26 5.8 20.2 0 13 0z"
+              fill="#A142F4" stroke="black" stroke-width="2"/>
+        <circle cx="13" cy="13" r="6" fill="white" stroke="black" stroke-width="2"/>
+      </svg>
+    </g>
+
+    <!-- CYAN -->
+    <g id="pin-cyan">
+      <svg width="26" height="42" viewBox="0 0 26 42">
+        <path d="M13 0C5.8 0 0 5.8 0 13c0 10.6 13 29 13 29s13-18.4 13-29C26 5.8 20.2 0 13 0z"
+              fill="#00ACC1" stroke="black" stroke-width="2"/>
+        <circle cx="13" cy="13" r="6" fill="white" stroke="black" stroke-width="2"/>
+      </svg>
+    </g>
+
+    <!-- PINK -->
+    <g id="pin-pink">
+      <svg width="26" height="42" viewBox="0 0 26 42">
+        <path d="M13 0C5.8 0 0 5.8 0 13c0 10.6 13 29 13 29s13-18.4 13-29C26 5.8 20.2 0 13 0z"
+              fill="#FF4081" stroke="black" stroke-width="2"/>
+        <circle cx="13" cy="13" r="6" fill="white" stroke="black" stroke-width="2"/>
+      </svg>
+    </g>
+
+    <!-- YELLOW -->
+    <g id="pin-yellow">
+      <svg width="26" height="42" viewBox="0 0 26 42">
+        <path d="M13 0C5.8 0 0 5.8 0 13c0 10.6 13 29 13 29s13-18.4 13-29C26 5.8 20.2 0 13 0z"
+              fill="#FBC02D" stroke="black" stroke-width="2"/>
+        <circle cx="13" cy="13" r="6" fill="white" stroke="black" stroke-width="2"/>
+      </svg>
+    </g>
+
+    <!-- BLACK -->
+    <g id="pin-black">
+      <svg width="26" height="42" viewBox="0 0 26 42">
+        <path d="M13 0C5.8 0 0 5.8 0 13c0 10.6 13 29 13 29s13-18.4 13-29C26 5.8 20.2 0 13 0z"
+              fill="#000000" stroke="black" stroke-width="2"/>
+        <circle cx="13" cy="13" r="6" fill="white" stroke="black" stroke-width="2"/>
+      </svg>
+    </g>
+
+  </defs>
+</svg>
+
+<!-- ============================================================
+     LOAD LEAFLET + JS COMES NEXT
+============================================================ -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- PART 2 WILL CONTINUE JS --><script>
+/* ============================================================
+   1) EVENT DATA (UNCHANGED)
+============================================================ */
+const DATA = {
+  "Sports": [
+    {title:"Polo Match vs Harvard", city:"Cambridge (Massachusetts)", country:"USA", lat:42.3736, lng:-71.1097},
+    {title:"Abu Dhabi International Sports Festival", city:"Abu Dhabi", country:"UAE", lat:24.4539, lng:54.3773}
+  ],
+  "Sports Collaboration With Round Square": [
+    {title:"Japan Basketball Tour", city:"Tokyo", country:"Japan", lat:35.6762, lng:139.6503},
+    {title:"Bangladesh Cricket Collaboration", city:"Dhaka", country:"Bangladesh", lat:23.8103, lng:90.4125}
+  ],
+  "Round Square": [
+    {title:"Round Square International Conference — Kenya", city:"Nairobi", country:"Kenya", lat:-1.2921, lng:36.8219},
+    {title:"Round Square International Conference — Colombia", city:"Bogotá", country:"Colombia", lat:4.7110, lng:-74.0721},
+    {title:"Round Square International Service Project — Thailand", city:"Bangkok", country:"Thailand", lat:13.7563, lng:100.5018},
+    {title:"Round Square Global Conference — Muscat", city:"Muscat", country:"Oman", lat:23.5859, lng:58.4059},
+    {title:"Round Square Global Conference — Dorset", city:"Dorset", country:"United Kingdom", lat:50.7488, lng:-2.3445},
+    {title:"Round Square Global Conference — Shenzhen", city:"Shenzhen", country:"China", lat:22.5431, lng:114.0579},
+    {title:"Round Square Global Conference — Amsterdam", city:"Amsterdam", country:"Netherlands", lat:52.3676, lng:4.9041},
+    {title:"Round Square Global Conference — Tanzania", city:"Arusha", country:"Tanzania", lat:-3.3869, lng:36.6830}
+  ],
+  "Exchanges": [
+    {title:"Australia Exchange — Hale School", city:"Perth", country:"Australia", lat:-31.9523, lng:115.8613},
+    {title:"Australia Exchange — Wesley College", city:"Melbourne", country:"Australia", lat:-37.8136, lng:144.9631},
+    {title:"UK Exchange — Gresham’s School", city:"Norfolk", country:"United Kingdom", lat:52.6309, lng:1.2974},
+    {title:"UK Exchange — Beechwood Primary School", city:"Leeds", country:"United Kingdom", lat:53.8008, lng:-1.5491},
+    {title:"UK Exchange — Orwell Park", city:"Ipswich", country:"United Kingdom", lat:52.0567, lng:1.1482},
+    {title:"German Exchange — Schloss Gaeinhoffen", city:"Baden-Württemberg", country:"Germany", lat:48.669, lng:9.350},
+    {title:"French Exchange — Lycée Guy Mollet (Arras) & Sainte Marie de Chavagnes (Cannes)", city:"Arras & Cannes", country:"France", lat:50.293, lng:2.7819},
+    {title:"South Africa Exchange — St John's College", city:"Johannesburg", country:"South Africa", lat:-26.2041, lng:28.0473},
+    {title:"Belgium Exchange — Sint-Cordula Instituut (Antwerp) & Kardinaal Van Roey Instituut (Vorselaar)", city:"Antwerp & Vorselaar", country:"Belgium", lat:51.2194, lng:4.4025}
+  ],
+  "Insightful Expeditions": [
+    {title:"Geography Tour — Las Vegas / Los Angeles / San Francisco", city:"Las Vegas / LA / SF", country:"USA", lat:36.1699, lng:-115.1398},
+    {title:"Forensic Science Tour — Barcelona / Madrid / San Sebastian", city:"Barcelona / Madrid / San Sebastian", country:"Spain", lat:40.4168, lng:-3.7038},
+    {title:"History Tour — Germany, France, Austria, Poland, and Belgium", city:"Europe", country:"Europe", lat:50.1109, lng:10.0}
+  ],
+  "World Scholars' Cup": [
+    {title:"World Scholars' Cup Global Round — Bangkok", city:"Bangkok", country:"Thailand", lat:13.7563, lng:100.5018},
+    {title:"World Scholars' Cup Global Round — Seoul", city:"Seoul", country:"South Korea", lat:37.5519, lng:126.9918},
+    {title:"World Scholars' Cup Global Round — Doha", city:"Doha", country:"Qatar", lat:25.2854, lng:51.5310},
+    {title:"World Scholars' Cup Tournament of Champions — Yale University", city:"New Jersey", country:"USA", lat:41.3163, lng:-72.9223}
+  ],
+  "Model United Nations": [
+    {title:"Model United Nations — United Kingdom", city:"London", country:"United Kingdom", lat:51.5074, lng:-0.1278}
+  ],
+  "Fests": [
+    {title:"Edinburgh Music Fest", city:"Edinburgh", country:"United Kingdom", lat:55.9533, lng:-3.1883},
+    {title:"Drukyul Arts & Literature Festival", city:"Thimphu", country:"Bhutan", lat:27.4728, lng:89.6393},
+    {title:"German Day — Musaeus College", city:"Colombo", country:"Sri Lanka", lat:6.9271, lng:79.8612},
+    {title:"La Fête de la Francophonie — GEMS Modern Academy", city:"Dubai", country:"UAE", lat:25.2048, lng:55.2708},
+    {title:"German Youth Camp — Frankfurt", city:"Frankfurt", country:"Germany", lat:50.1109, lng:8.6821}
+  ],
+  "Drama": [
+    {title:"Oliver Twist — David Ensemble", city:"London", country:"United Kingdom", lat:51.5074, lng:-0.1278}
+  ],
+  "Trek": [
+    {title:"Everest Base Camp Trek", city:"Everest Base Camp", country:"Nepal", lat:28.0043, lng:86.8571}
+  ]
+};
+
+/* ============================================================
+   2) CATEGORY → PIN COLOR MAP
+============================================================ */
+const PIN_COLOR = {
+  "Sports":"red",
+  "Sports Collaboration With Round Square":"orange",
+  "Round Square":"green",
+  "Exchanges":"white",
+  "Insightful Expeditions":"blue",
+  "World Scholars' Cup":"purple",
+  "Model United Nations":"cyan",
+  "Fests":"pink",
+  "Drama":"yellow",
+  "Trek":"black"
+};
+
+/* ============================================================
+   3) LEAFLET MAP INITIALIZATION
+============================================================ */
+const map = L.map("map",{
+  minZoom:2,
+  maxZoom:10,
+  zoomControl:true
+}).setView([20,0],2);
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+  maxZoom:19,
+  noWrap:true
+}).addTo(map);
+
+map.setMaxBounds([[-85,-180],[85,180]]);
+
+/* Reset Map */
+document.getElementById("resetMap").onclick = ()=>{
+  map.setView([20,0],2,{animate:true});
+};
+
+/* ============================================================
+   4) BUILD TABS + EVENT LIST
+============================================================ */
+const tabBar = document.getElementById("tabBar");
+const eventSection = document.getElementById("eventSection");
+
+Object.keys(DATA).forEach((category,i)=>{
+
+  /* TABS */
+  const tab = document.createElement("button");
+  tab.className = "tab";
+  tab.dataset.cat = category;
+  tab.textContent = category;
+  if(i===0) tab.classList.add("active");
+  tab.onclick = ()=> activateTab(category);
+  tabBar.appendChild(tab);
+
+  /* GROUPS */
+  const group = document.createElement("div");
+  group.className = "group";
+  group.id = "group-"+category;
+  if(i===0) group.classList.add("active");
+  eventSection.appendChild(group);
+
+  /* EVENT CARDS */
+  DATA[category].forEach(ev=>{
+    const card = document.createElement("div");
+    card.className="event-card";
+    card.dataset.lat=ev.lat;
+    card.dataset.lng=ev.lng;
+    card.innerHTML = `
+      <h3>${ev.title}</h3>
+      <div class="location">${ev.city}, ${ev.country}</div>
+    `;
+    card.onclick = ()=> focusMarker(ev.lat,ev.lng);
+    group.appendChild(card);
+  });
+});
+
+/* ============================================================
+   5) PIN CREATION (SVG CLONING)
+============================================================ */
+function createPin(color){
+  const svg = document.getElementById("pin-"+color).innerHTML;
+  return L.divIcon({
+    html: svg,
+    className:"pin-icon",
+    iconSize:[26,42],
+    iconAnchor:[13,42]
+  });
+}
+
+const markers = [];
+
+Object.keys(DATA).forEach(cat=>{
+  DATA[cat].forEach(ev=>{
+    const pin = createPin(PIN_COLOR[cat]);
+    const m = L.marker([ev.lat,ev.lng],{icon:pin}).addTo(map);
+    m.bindPopup(`<b>${ev.title}</b><br>${ev.city}, ${ev.country}`);
+    markers.push({m,cat,ev});
+  });
+});
+
+/* ============================================================
+   6) TAB LOGIC
+============================================================ */
+function activateTab(cat){
+  resetMap();
+
+  document.querySelectorAll(".tab").forEach(t=>{
+    t.classList.toggle("active", t.dataset.cat===cat);
+  });
+
+  document.querySelectorAll(".group").forEach(g=>g.classList.remove("active"));
+  document.getElementById("group-"+cat).classList.add("active");
+
+  const pts=[];
+  markers.forEach(o=>{
+    o.m._icon.classList.remove("active");
+    o.m.closePopup();
+
+    if(o.cat===cat){
+      o.m._icon.classList.add("active");
+      pts.push(o.m.getLatLng());
+    }
+  });
+
+  if(pts.length===1) map.setView(pts[0],6,{animate:true});
+  else if(pts.length>1) map.fitBounds(pts,{padding:[60,60]});
+}
+
+/* Reset Map For Tab / Search */
+function resetMap(){
+  map.setView([20,0],2,{animate:false});
+}
+
+/* ============================================================
+   7) FOCUS MARKER
+============================================================ */
+function focusMarker(lat,lng){
+  resetMap();
+  setTimeout(()=>{
+    map.setView([lat,lng],7,{animate:true});
+    markers.forEach(o=>{
+      if(o.ev.lat===lat && o.ev.lng===lng){
+        o.m.openPopup();
+        o.m._icon.classList.add("active");
+      } else o.m._icon?.classList.remove("active");
+    });
+  },300);
+}
+
+/* ============================================================
+   8) SEARCH ENGINE
+============================================================ */
+const searchInput = document.getElementById("searchInput");
+const searchMessage = document.getElementById("searchMessage");
+
+searchInput.addEventListener("keydown", e=>{
+  if(e.key==="Enter") runSearch();
+});
+
+function runSearch(){
+  const q = searchInput.value.trim().toLowerCase();
+  if(!q){
+    searchMessage.textContent="Please type something.";
+    return;
+  }
+
+  resetMap();
+
+  let found = false;
+
+  markers.forEach(o=>{
+    const text = `${o.ev.title} ${o.ev.city} ${o.ev.country}`.toLowerCase();
+    if(text.includes(q)){
+      found = true;
+      setTimeout(()=> focusMarker(o.ev.lat, o.ev.lng), 300);
+    }
+  });
+
+  searchMessage.textContent = found ? "" : "No matching result found.";
+}
+
+/* ============================================================
+   9) FILTER POPUP
+============================================================ */
+const filterModal = document.getElementById("filterModal");
+document.getElementById("filterBtn").onclick = ()=> filterModal.style.display="flex";
+document.getElementById("closeFilter").onclick = ()=> filterModal.style.display="none";
+
+const filterList = document.getElementById("filterList");
+
+Object.keys(DATA).forEach(cat=>{
+  const lbl=document.createElement("label");
+  lbl.innerHTML = `<input type="checkbox" data-cat="${cat}" checked> ${cat}`;
+  filterList.appendChild(lbl);
+});
+
+document.getElementById("applyFilters").onclick = ()=>{
+  document.querySelectorAll("#filterList input").forEach(cb=>{
+    toggleCategory(cb.dataset.cat, cb.checked);
+  });
+  filterModal.style.display="none";
+};
+
+document.getElementById("resetFilters").onclick = ()=>{
+  document.querySelectorAll("#filterList input").forEach(cb=>{
+    cb.checked = true;
+    toggleCategory(cb.dataset.cat, true);
+  });
+};
+
+function toggleCategory(cat,show){
+  markers.forEach(o=>{
+    if(o.cat===cat){
+      if(show) o.m.addTo(map);
+      else map.removeLayer(o.m);
+    }
+  });
+}
+
+/* ============================================================
+   10) SCROLL FADE ANIMATION
+============================================================ */
+let lastY = 0;
+window.addEventListener("scroll", ()=>{
+  const tb = document.getElementById("topbar");
+  const y = window.scrollY;
+  tb.classList.toggle("fade-out", y > lastY);
+  lastY = y;
+});
+
+/* ============================================================
+   11) PWA SERVICE WORKER
+============================================================ */
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js");
+}
+</script>
+</body>
+</html>
+
