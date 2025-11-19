@@ -143,12 +143,23 @@ body{
   max-width:var(--max-width);
   margin:25px auto;
   padding:0 18px;
- background-image: url("https://i.ibb.co/7yP7zzv/worldmap.png");
-    background-size: contain;
-background-repeat: no-repeat;
-background-position: right center;
-background-blend-mode: overlay;
-opacity: 0.25;
+  
+  background: url("https://i.ibb.co/7yP7zzv/worldmap.png") right center / contain no-repeat;
+  position: relative;
+}
+
+.hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: inherit;
+  opacity:0.25;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: right center;
+  z-index:-1;
+}
+
 
 }
 .hero h1{
@@ -820,6 +831,7 @@ if("serviceWorker" in navigator){
 </script>
 </body>
 </html>
+
 
 
 
