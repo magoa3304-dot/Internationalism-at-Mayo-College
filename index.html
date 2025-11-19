@@ -613,22 +613,24 @@ Object.keys(DATA).forEach((category,i)=>{
   eventSection.appendChild(group);
 
   /* EVENT CARDS */
-DATA[category].forEach((ev, index)=>{
-  const card = document.createElement("div");
-  card.className = "event-card";
-  card.style.animationDelay = (index * 0.07) + "s";
+  DATA[category].forEach((ev, index)=>{
+    const card = document.createElement("div");
+    card.className = "event-card";
+    card.style.animationDelay = (index * 0.07) + "s";
 
-  card.dataset.lat = ev.lat;
-  card.dataset.lng = ev.lng;
+    card.dataset.lat = ev.lat;
+    card.dataset.lng = ev.lng;
 
-  card.innerHTML = `
-    <h3>${ev.title}</h3>
-    <div class="location">${ev.city}, ${ev.country}</div>
-  `;
+    card.innerHTML = `
+      <h3>${ev.title}</h3>
+      <div class="location">${ev.city}, ${ev.country}</div>
+    `;
 
-  card.onclick = ()=> focusMarker(ev.lat, ev.lng);
-  group.appendChild(card);
-});
+    card.onclick = ()=> focusMarker(ev.lat, ev.lng);
+    group.appendChild(card);
+  });
+
+}); // <-- IMPORTANT FIX 🔥
 
 /* ============================================================
    5) PIN CREATION (SVG CLONING)
@@ -818,6 +820,7 @@ if("serviceWorker" in navigator){
 </script>
 </body>
 </html>
+
 
 
 
