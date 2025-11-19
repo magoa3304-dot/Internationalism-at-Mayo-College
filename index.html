@@ -144,10 +144,11 @@ body{
   margin:25px auto;
   padding:0 18px;
  background-image: url("https://i.ibb.co/7yP7zzv/worldmap.png");
-    background-size: 600px;
-    background-repeat: no-repeat;
-    background-position: right center;
-    background-color: rgba(13, 17, 23, 0.85); /* optional for darker blend */
+    background-size: contain;
+background-repeat: no-repeat;
+background-position: right center;
+background-blend-mode: overlay;
+opacity: 0.25;
 
 }
 .hero h1{
@@ -819,6 +820,7 @@ if("serviceWorker" in navigator){
 </script>
 </body>
 </html>
+
 
 
 
