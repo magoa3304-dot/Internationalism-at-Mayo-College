@@ -588,7 +588,21 @@ Object.keys(DATA).forEach((category,i)=>{
    5) PIN CREATION (SVG CLONING)
 ============================================================ */
 function createPin(color){
-  const svg = document.getElementById("pin-"+color).innerHTML;
+  const pinName = color || "red";
+  const el = document.getElementById("pin-" + pinName);
+
+  if(!el){
+    console.warn(`Missing SVG for pin-${pinName} — using fallback pin-red`);
+    const fallback = document.getElementById("pin-red").innerHTML;
+    return L.divIcon({
+      html: fallback,
+      className:"pin-icon",
+      iconSize:[26,42],
+      iconAnchor:[13,42]
+    });
+  }
+
+  const svg = el.innerHTML;
   return L.divIcon({
     html: svg,
     className:"pin-icon",
@@ -596,6 +610,7 @@ function createPin(color){
     iconAnchor:[13,42]
   });
 }
+
 
 const markers = [];
 
@@ -746,6 +761,7 @@ if("serviceWorker" in navigator){
 </script>
 </body>
 </html>
+
 
 
 
