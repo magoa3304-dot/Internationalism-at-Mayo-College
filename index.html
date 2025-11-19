@@ -627,6 +627,7 @@ Object.keys(DATA).forEach(cat=>{
    6) TAB LOGIC
 ============================================================ */
 function activateTab(cat){
+  document.getElementById("map").scrollIntoView({ behavior: "smooth" });
   resetMap();
 
   document.querySelectorAll(".tab").forEach(t=>{
@@ -761,6 +762,7 @@ if("serviceWorker" in navigator){
 </script>
 </body>
 </html>
+
 
 
 
