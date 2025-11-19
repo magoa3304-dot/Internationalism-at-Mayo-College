@@ -450,10 +450,10 @@ body{
 ============================================================ */
 const DATA = {
   "Sports": [
-    {title:"Polo Match vs Harvard", city:"Cambridge (Massachusetts)", country:"USA", lat:42.3736, lng:-71.1097},
+    {title:"Mayo vs Harvard (Polo Match)", city:"Cambridge (Massachusetts)", country:"USA", lat:42.3736, lng:-71.1097},
     {title:"Abu Dhabi International Sports Festival", city:"Abu Dhabi", country:"UAE", lat:24.4539, lng:54.3773}
   ],
-  "Sports Collaboration With Round Square": [
+  "Sports Collaboration with Round Square": [
     {title:"Japan Basketball Tour", city:"Tokyo", country:"Japan", lat:35.6762, lng:139.6503},
     {title:"Bangladesh Cricket Collaboration", city:"Dhaka", country:"Bangladesh", lat:23.8103, lng:90.4125}
   ],
@@ -461,27 +461,27 @@ const DATA = {
     {title:"Round Square International Conference — Kenya", city:"Nairobi", country:"Kenya", lat:-1.2921, lng:36.8219},
     {title:"Round Square International Conference — Colombia", city:"Bogotá", country:"Colombia", lat:4.7110, lng:-74.0721},
     {title:"Round Square International Service Project — Thailand", city:"Bangkok", country:"Thailand", lat:13.7563, lng:100.5018},
-    {title:"Round Square Global Conference — Muscat", city:"Muscat", country:"Oman", lat:23.5859, lng:58.4059},
+    {title:"The Round Square Forum for South Asia & the Gulf Region", city:"Muscat", country:"Oman", lat:23.5859, lng:58.4059},
     {title:"Round Square Global Conference — Dorset", city:"Dorset", country:"United Kingdom", lat:50.7488, lng:-2.3445},
     {title:"Round Square Global Conference — Shenzhen", city:"Shenzhen", country:"China", lat:22.5431, lng:114.0579},
-    {title:"Round Square Global Conference — Amsterdam", city:"Amsterdam", country:"Netherlands", lat:52.3676, lng:4.9041},
     {title:"Round Square Global Conference — Tanzania", city:"Arusha", country:"Tanzania", lat:-3.3869, lng:36.6830}
   ],
   "Exchanges": [
-    {title:"Australia Exchange — Hale School", city:"Perth", country:"Australia", lat:-31.9523, lng:115.8613},
-    {title:"Australia Exchange — Wesley College", city:"Melbourne", country:"Australia", lat:-37.8136, lng:144.9631},
+    {title:"Australian Exchange — Hale School", city:"Perth", country:"Australia", lat:-31.9523, lng:115.8613},
+    {title:"Australian Exchange — Wesley College", city:"Melbourne", country:"Australia", lat:-37.8136, lng:144.9631},
     {title:"UK Exchange — Gresham’s School", city:"Norfolk", country:"United Kingdom", lat:52.6309, lng:1.2974},
     {title:"UK Exchange — Beechwood Primary School", city:"Leeds", country:"United Kingdom", lat:53.8008, lng:-1.5491},
-    {title:"UK Exchange — Orwell Park", city:"Ipswich", country:"United Kingdom", lat:52.0567, lng:1.1482},
+    {title:"UK Exchange — Orwell Park School", city:"Ipswich", country:"United Kingdom", lat:52.0567, lng:1.1482},
     {title:"German Exchange — Schloss Gaeinhoffen", city:"Baden-Württemberg", country:"Germany", lat:48.669, lng:9.350},
     {title:"French Exchange — Lycée Guy Mollet (Arras) & Sainte Marie de Chavagnes (Cannes)", city:"Arras & Cannes", country:"France", lat:50.293, lng:2.7819},
-    {title:"South Africa Exchange — St John's College", city:"Johannesburg", country:"South Africa", lat:-26.2041, lng:28.0473},
-    {title:"Belgium Exchange — Sint-Cordula Instituut (Antwerp) & Kardinaal Van Roey Instituut (Vorselaar)", city:"Antwerp & Vorselaar", country:"Belgium", lat:51.2194, lng:4.4025}
+    {title:"South African Exchange — St John's College", city:"Johannesburg", country:"South Africa", lat:-26.2041, lng:28.0473},
+    {title:"Belgian Exchange — Sint-Cordula Instituut (Antwerp) & Kardinaal Van Roey Instituut (Vorselaar)", city:"Antwerp & Vorselaar", country:"Belgium", lat:51.2194, lng:4.4025}
   ],
   "Insightful Expeditions": [
-    {title:"Geography Tour — Las Vegas / Los Angeles / San Francisco", city:"Las Vegas / LA / SF", country:"USA", lat:36.1699, lng:-115.1398},
-    {title:"Forensic Science Tour — Barcelona / Madrid / San Sebastian", city:"Barcelona / Madrid / San Sebastian", country:"Spain", lat:40.4168, lng:-3.7038},
-    {title:"History Tour — Germany, France, Austria, Poland, and Belgium", city:"Europe", country:"Europe", lat:50.1109, lng:10.0}
+    {title:"Geography Tour", city:"Las Vegas / Los Angeles / San Francisco", country:"USA", lat:36.1699, lng:-115.1398},
+    {title:"Forensic Science Tour", city:"Barcelona / Madrid / San Sebastian", country:"Spain", lat:40.4168, lng:-3.7038},
+    {title:"History Tour", city:"Germany / France / Austria / Poland / Belgium", country:"Europe", lat:50.1109, lng:10.0},
+    {title:"Post Conference Tour (RSIC)", city:"Amsterdam", country:"Netherlands", lat:52.3676, lng:4.9041}
   ],
   "World Scholars' Cup": [
     {title:"World Scholars' Cup Global Round — Bangkok", city:"Bangkok", country:"Thailand", lat:13.7563, lng:100.5018},
@@ -492,8 +492,8 @@ const DATA = {
   "Model United Nations": [
     {title:"Model United Nations — United Kingdom", city:"London", country:"United Kingdom", lat:51.5074, lng:-0.1278}
   ],
-  "Fests": [
-    {title:"Edinburgh Music Fest", city:"Edinburgh", country:"United Kingdom", lat:55.9533, lng:-3.1883},
+  "Fests and Camps": [
+    {title:"Edinburgh Fringe Festival", city:"Edinburgh", country:"United Kingdom", lat:55.9533, lng:-3.1883},
     {title:"Drukyul Arts & Literature Festival", city:"Thimphu", country:"Bhutan", lat:27.4728, lng:89.6393},
     {title:"German Day — Musaeus College", city:"Colombo", country:"Sri Lanka", lat:6.9271, lng:79.8612},
     {title:"La Fête de la Francophonie — GEMS Modern Academy", city:"Dubai", country:"UAE", lat:25.2048, lng:55.2708},
@@ -640,6 +640,14 @@ function resetMap(){
   map.setView([20,0],2,{animate:false});
 }
 
+/* ⭐ ADD THIS FUNCTION RIGHT HERE ⭐ */
+function scrollToMap(){
+  document.getElementById("map").scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
+}
+
 /* ============================================================
    7) FOCUS MARKER
 ============================================================ */
@@ -746,4 +754,5 @@ if("serviceWorker" in navigator){
 </script>
 </body>
 </html>
+
 
