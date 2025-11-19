@@ -229,6 +229,23 @@ text-shadow: 0 0 18px rgba(255,255,255,0.45),
   cursor:pointer;
   transition:0.25s;
 }
+  /* Fade-In Animation */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.event-card {
+  opacity: 0;
+  animation: fadeUp 0.55s ease forwards;
+}
+
 .event-card:hover{
   background:#1d2430;
   transform:translateY(-5px);
@@ -790,6 +807,7 @@ if("serviceWorker" in navigator){
 </script>
 </body>
 </html>
+
 
 
 
