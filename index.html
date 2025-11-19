@@ -659,18 +659,28 @@ function resetMap(){
 /* ============================================================
    7) FOCUS MARKER
 ============================================================ */
-function focusMarker(lat,lng){
+function focusMarker(lat, lng) {
+
+  // Scroll to map when ANY sub-tab (event card) is clicked
+  document.getElementById("map").scrollIntoView({ behavior: "smooth" });
+
   resetMap();
-  setTimeout(()=>{
-    map.setView([lat,lng],7,{animate:true});
-    markers.forEach(o=>{
-      if(o.ev.lat===lat && o.ev.lng===lng){
+
+  setTimeout(() => {
+    map.setView([lat, lng], 7, { animate: true });
+
+    markers.forEach(o => {
+      if (o.ev.lat === lat && o.ev.lng === lng) {
         o.m.openPopup();
         o.m._icon.classList.add("active");
-      } else o.m._icon?.classList.remove("active");
+      } else {
+        o.m._icon?.classList.remove("active");
+      }
     });
-  },300);
+
+  }, 300);
 }
+
 
 /* ============================================================
    8) SEARCH ENGINE
@@ -762,6 +772,7 @@ if("serviceWorker" in navigator){
 </script>
 </body>
 </html>
+
 
 
 
