@@ -605,8 +605,12 @@ Object.keys(DATA).forEach((category,i)=>{
   eventSection.appendChild(group);
 
   /* EVENT CARDS */
-  DATA[category].forEach(ev=>{
-    const card = document.createElement("div");
+DATA[category].forEach((ev, index)=>{
+  const card = document.createElement("div");
+  card.className="event-card";
+  card.style.animationDelay = (index * 0.07) + "s";
+
+const card = document.createElement("div");
     card.className="event-card";
     card.dataset.lat=ev.lat;
     card.dataset.lng=ev.lng;
@@ -807,6 +811,7 @@ if("serviceWorker" in navigator){
 </script>
 </body>
 </html>
+
 
 
 
