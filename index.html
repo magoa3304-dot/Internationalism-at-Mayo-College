@@ -615,20 +615,19 @@ Object.keys(DATA).forEach((category,i)=>{
   /* EVENT CARDS */
 DATA[category].forEach((ev, index)=>{
   const card = document.createElement("div");
-  card.className="event-card";
+  card.className = "event-card";
   card.style.animationDelay = (index * 0.07) + "s";
 
-const card = document.createElement("div");
-    card.className="event-card";
-    card.dataset.lat=ev.lat;
-    card.dataset.lng=ev.lng;
-    card.innerHTML = `
-      <h3>${ev.title}</h3>
-      <div class="location">${ev.city}, ${ev.country}</div>
-    `;
-    card.onclick = ()=> focusMarker(ev.lat,ev.lng);
-    group.appendChild(card);
-  });
+  card.dataset.lat = ev.lat;
+  card.dataset.lng = ev.lng;
+
+  card.innerHTML = `
+    <h3>${ev.title}</h3>
+    <div class="location">${ev.city}, ${ev.country}</div>
+  `;
+
+  card.onclick = ()=> focusMarker(ev.lat, ev.lng);
+  group.appendChild(card);
 });
 
 /* ============================================================
@@ -819,6 +818,7 @@ if("serviceWorker" in navigator){
 </script>
 </body>
 </html>
+
 
 
 
