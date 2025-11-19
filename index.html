@@ -535,10 +535,15 @@ const map = L.map("map",{
   zoomControl:true
 }).setView([20,0],2);
 
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-  maxZoom:19,
-  noWrap:true
-}).addTo(map);
+L.tileLayer(
+  "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+  {
+    attribution: '&copy; CARTO',
+    subdomains: "abcd",
+    maxZoom: 19
+  }
+).addTo(map);
+
 
 map.setMaxBounds([[-85,-180],[85,180]]);
 
@@ -774,6 +779,7 @@ if("serviceWorker" in navigator){
 </script>
 </body>
 </html>
+
 
 
 
