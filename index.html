@@ -386,6 +386,26 @@ text-shadow: 0 0 18px rgba(255,255,255,0.45),
    SCROLL FADE FOR TOPBAR
 ============================================================ */
 .fade-out{opacity:0.25;}
+  /* HIDE MAP WHEN GALLERY IS ACTIVE */
+.gallery-open #map,
+.gallery-open .reset-map,
+.gallery-open .event-section,
+.gallery-open .search-wrap,
+.gallery-open #filterBtn {
+  display: none !important;
+}
+
+.gallery-open .hero {
+  display: none !important;
+}
+
+/* MAKE GALLERY FULL WIDTH */
+.gallery-open #eventSection {
+  max-width: 100% !important;
+  width: 100% !important;
+  padding: 0 12px;
+}
+
 </style>
 </head>
 
@@ -564,7 +584,48 @@ text-shadow: 0 0 18px rgba(255,255,255,0.45),
    1) EVENT DATA (UNCHANGED)
 ============================================================ */
 const DATA = {
-  
+  "Gallery": [
+  { img: "gallery/img1.jpg", caption: "International Exchange — Learning Beyond Borders" },
+  { img: "gallery/img2.jpg", caption: "Round Square Conference Moments" },
+  { img: "gallery/img3.jpg", caption: "Global Citizenship in Action" },
+  { img: "gallery/img4.jpg", caption: "Exploring Cultures Through Travel" },
+  { img: "gallery/img5.jpg", caption: "Team Mayo at an International Event" },
+  { img: "gallery/img6.jpg", caption: "Adventure & Leadership Workshop" },
+  { img: "gallery/img7.jpg", caption: "Cultural Immersion Program" },
+  { img: "gallery/img8.jpg", caption: "Exploring Historic Sites" },
+  { img: "gallery/img9.jpg", caption: "Leadership in Action — Expedition" },
+  { img: "gallery/img10.jpg", caption: "Mayo Students in Europe" },
+  { img: "gallery/img11.jpg", caption: "Outdoor Learning Experience" },
+  { img: "gallery/img12.jpg", caption: "Round Square Collaboration" },
+  { img: "gallery/img13.jpg", caption: "Exchange Students at Mayo" },
+  { img: "gallery/img14.jpg", caption: "International Exposure Tour" },
+  { img: "gallery/img15.jpg", caption: "Students at a Global Summit" },
+  { img: "gallery/img16.jpg", caption: "Immersive Learning Trip" },
+  { img: "gallery/img17.jpg", caption: "Cultural Fest Participation" },
+  { img: "gallery/img18.jpg", caption: "Mountain Trek Adventure" },
+  { img: "gallery/img19.jpg", caption: "Team Mayo in Southeast Asia" },
+  { img: "gallery/img20.jpg", caption: "Global Youth Meet" },
+  { img: "gallery/img21.jpg", caption: "Historical Exploration Tour" },
+  { img: "gallery/img22.jpg", caption: "International Debating Championship" },
+  { img: "gallery/img23.jpg", caption: "Science & Innovation Trip" },
+  { img: "gallery/img24.jpg", caption: "Cultural Exchange Evening" },
+  { img: "gallery/img25.jpg", caption: "Adventure Campfire" },
+  { img: "gallery/img26.jpg", caption: "International Friendship Circle" },
+  { img: "gallery/img27.jpg", caption: "Sports Collaboration Abroad" },
+  { img: "gallery/img28.jpg", caption: "Mayo Delegation at RSIC" },
+  { img: "gallery/img29.jpg", caption: "Exploring Landmark Locations" },
+  { img: "gallery/img30.jpg", caption: "Outdoor Leadership Program" },
+  { img: "gallery/img31.jpg", caption: "Team Spirit Overseas" },
+  { img: "gallery/img32.jpg", caption: "Art & Culture Trip" },
+  { img: "gallery/img33.jpg", caption: "Global Scholars’ Gathering" },
+  { img: "gallery/img34.jpg", caption: "Epic Group Adventure" },
+  { img: "gallery/img35.jpg", caption: "Learning Through Travel" },
+  { img: "gallery/img36.jpg", caption: "Exploring New Perspectives" },
+  { img: "gallery/img37.jpg", caption: "Team Mayo at International Forum" },
+  { img: "gallery/img38.jpg", caption: "Student Exchange Memories" },
+  { img: "gallery/img39.jpg", caption: "International Collaboration Event" },
+  { img: "gallery/img40.jpg", caption: "Celebrating Global Diversity" }
+],
   "Sports": [
     {title:"Mayo vs Harvard (Polo Match)", city:"Cambridge (Massachusetts)", country:"USA", lat:42.3736, lng:-71.1097},
     {title:"Abu Dhabi International Sports Festival", city:"Abu Dhabi", country:"UAE", lat:24.4539, lng:54.3773}
@@ -944,6 +1005,7 @@ if("serviceWorker" in navigator){
 </script>
 </body>
 </html>
+
 
 
 
