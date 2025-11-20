@@ -102,19 +102,48 @@ body{
   transition:opacity .25s ease;
 }
 
+/* Premium Sliding Chip Carousel */
 .tab-container{
   display:flex;
   gap:12px;
   overflow-x:auto;
   scrollbar-width:none;
+  padding:4px;
+  scroll-behavior:smooth;
+  position:relative;
 }
-.tab-container::-webkit-scrollbar{display:none;}
+
+.tab-container::-webkit-scrollbar{
+  display:none;
+}
+
+/* Fade edges to show scrollable content */
+.tab-container::before,
+.tab-container::after{
+  content:"";
+  position:absolute;
+  top:0;
+  width:40px;
+  height:100%;
+  pointer-events:none;
+}
+
+.tab-container::before{
+  left:0;
+  background:linear-gradient(to right, var(--bg), transparent);
+}
+
+.tab-container::after{
+  right:0;
+  background:linear-gradient(to left, var(--bg), transparent);
+}
+
 
 .tab{
-  background:none;
-  border:none;
-  padding:9px 14px;
-  border-radius:8px;
+  background:var(--card);
+  border:1px solid var(--border);
+  padding:8px 16px;
+  border-radius:30px;
   font-size:14px;
   font-weight:600;
   white-space:nowrap;
@@ -122,14 +151,21 @@ body{
   cursor:pointer;
   transition:0.25s;
 }
+
 .tab:hover{
-  color:var(--highlight);
   transform:translateY(-2px);
+  border-color:var(--highlight);
+  color:var(--highlight); 
+  
 }
+  
+
 .tab.active{
   background:var(--highlight);
-  color:#000;
+  color:black;
+  border-color:var(--highlight);
 }
+
 
 /* ============================================================
    CONTROLS
@@ -528,6 +564,13 @@ text-shadow: 0 0 18px rgba(255,255,255,0.45),
    1) EVENT DATA (UNCHANGED)
 ============================================================ */
 const DATA = {
+  "Gallery": [
+  {img:"https://i.imgur.com/9Y7Yq4B.jpg", caption:"Mayo International Trip"},
+  {img:"https://i.imgur.com/qJ7G8Zo.jpg", caption:"Round Square Event"},
+  {img:"https://i.imgur.com/zLLy1cs.jpeg", caption:"Cultural Exchange"},
+  {img:"https://i.imgur.com/5pCbd9E.jpeg", caption:"World Scholars’ Cup"},
+  {img:"https://i.imgur.com/S2dcIG2.jpeg", caption:"Geography Expedition"}
+],
   "Sports": [
     {title:"Mayo vs Harvard (Polo Match)", city:"Cambridge (Massachusetts)", country:"USA", lat:42.3736, lng:-71.1097},
     {title:"Abu Dhabi International Sports Festival", city:"Abu Dhabi", country:"UAE", lat:24.4539, lng:54.3773}
@@ -584,13 +627,7 @@ const DATA = {
  "Trek": [
   {title:"Everest Base Camp Trek", city:"Everest Base Camp", country:"Nepal", lat:28.0043, lng:86.8571}
 ],
-"Gallery": [
-  {img:"https://i.imgur.com/9Y7Yq4B.jpg", caption:"Mayo International Trip"},
-  {img:"https://i.imgur.com/qJ7G8Zo.jpg", caption:"Round Square Event"},
-  {img:"https://i.imgur.com/zLLy1cs.jpeg", caption:"Cultural Exchange"},
-  {img:"https://i.imgur.com/5pCbd9E.jpeg", caption:"World Scholars’ Cup"},
-  {img:"https://i.imgur.com/S2dcIG2.jpeg", caption:"Geography Expedition"}
-]
+
 };
 
 
@@ -654,7 +691,8 @@ const eventSection = document.getElementById("eventSection");
   tab.dataset.cat = category;
   tab.textContent = category;
   if(i===0) tab.classList.add("active");
-  tab.onclick = ()=> activateTab(category);
+  tab.onclick = () => activateTab(category);
+
   tabBar.appendChild(tab);
 
   /* GROUPS */
@@ -669,17 +707,23 @@ eventSection.appendChild(group);
 
   /* EVENT CARDS */
   DATA[category].forEach((ev, index)=>{
-    if(category === "Gallery"){
+   if (category === "Gallery") {
     const imgCard = document.createElement("div");
     imgCard.className = "gallery-item";
     imgCard.innerHTML = `
       <img src="${ev.img}" alt="Gallery Image">
       <div class="caption">${ev.caption}</div>
     `;
-    imgCard.onclick = ()=> window.open(ev.img, "_blank");
+
+    imgCard.addEventListener("click", () => {
+    const win = window.open(ev.img, "_blank", "noopener,noreferrer");
+    if (win) win.opener = null;
+    });
+
     group.appendChild(imgCard);
     return;
 }
+
 
     const card = document.createElement("div");
     card.className = "event-card";
@@ -748,36 +792,48 @@ Object.keys(DATA).forEach(cat=>{
 /* ============================================================
    6) TAB LOGIC
 ============================================================ */
-function activateTab(cat){
+function activateTab(cat) {
+  const tab = document.querySelector(`.tab[data-cat="${cat}"]`);
+  const tabBar = document.getElementById("tabBar");
+  if (!tab || !tabBar) return;
+
+  // auto-scroll tabs
+  const offset = tab.offsetLeft - (tabBar.clientWidth / 2) + (tab.clientWidth / 2);
+  tabBar.scrollTo({ left: offset, behavior: "smooth" });
+
+  // scroll map into view
   document.getElementById("map").scrollIntoView({ behavior: "smooth" });
+
   resetMap();
 
-  document.querySelectorAll(".tab").forEach(t=>{
-    t.classList.toggle("active", t.dataset.cat===cat);
+  // highlight active tab
+  document.querySelectorAll(".tab").forEach(t => {
+    t.classList.toggle("active", t.dataset.cat === cat);
   });
 
-  document.querySelectorAll(".group").forEach(g=>g.classList.remove("active"));
-  document.getElementById("group-"+cat).classList.add("active");
+  // show correct group
+  document.querySelectorAll(".group").forEach(g => g.classList.remove("active"));
+  document.getElementById("group-" + cat).classList.add("active");
 
-  const pts=[];
-  markers.forEach(o=>{
+  // pin highlighting + map focus
+  const pts = [];
+  markers.forEach(o => {
     o.m._icon.classList.remove("active");
     o.m.closePopup();
 
-    if(o.cat===cat){
-      o.m._icon.classList.add("active");
+    if (o.cat === cat) {
+      o.m._icon?.classList.add("active");
       pts.push(o.m.getLatLng());
     }
   });
 
-  if(pts.length===1) map.setView(pts[0],6,{animate:true});
-  else if(pts.length>1) map.fitBounds(pts,{padding:[60,60]});
+  if (pts.length === 1) {
+    map.setView(pts[0], 6, { animate: true });
+  } else if (pts.length > 1) {
+    map.fitBounds(pts, { padding: [60, 60] });
+  }
 }
 
-/* Reset Map For Tab / Search */
-function resetMap(){
-  map.setView([20,0],2,{animate:false});
-}
 /* ============================================================
    7) FOCUS MARKER
 ============================================================ */
@@ -894,6 +950,7 @@ if("serviceWorker" in navigator){
 </script>
 </body>
 </html>
+
 
 
 
