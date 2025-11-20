@@ -23,6 +23,43 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@600;800&display=swap" rel="stylesheet"/>
 
 <style>
+  /* ============================================================
+   GALLERY SECTION
+============================================================ */
+.gallery-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap:18px;
+  margin-top:20px;
+}
+
+.gallery-item{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  overflow:hidden;
+  transition:0.25s;
+  cursor:pointer;
+}
+
+.gallery-item:hover{
+  transform:scale(1.04);
+}
+
+.gallery-item img{
+  width:100%;
+  height:200px;
+  object-fit:cover;
+  display:block;
+}
+
+.gallery-item .caption{
+  margin:10px;
+  font-size:14px;
+  color:var(--muted);
+}
+
+
 /* ============================================================
    GLOBAL DARK THEME
 ============================================================ */
@@ -544,10 +581,18 @@ const DATA = {
   "Drama": [
     {title:"Oliver Twist — David Ensemble", city:"London", country:"United Kingdom", lat:51.5074, lng:-0.1278}
   ],
-  "Trek": [
-    {title:"Everest Base Camp Trek", city:"Everest Base Camp", country:"Nepal", lat:28.0043, lng:86.8571}
-  ]
+ "Trek": [
+  {title:"Everest Base Camp Trek", city:"Everest Base Camp", country:"Nepal", lat:28.0043, lng:86.8571}
+],
+"Gallery": [
+  {img:"https://i.imgur.com/9Y7Yq4B.jpg", caption:"Mayo International Trip"},
+  {img:"https://i.imgur.com/qJ7G8Zo.jpg", caption:"Round Square Event"},
+  {img:"https://i.imgur.com/zLLy1cs.jpeg", caption:"Cultural Exchange"},
+  {img:"https://i.imgur.com/5pCbd9E.jpeg", caption:"World Scholars’ Cup"},
+  {img:"https://i.imgur.com/S2dcIG2.jpeg", caption:"Geography Expedition"}
+]
 };
+
 
 /* ============================================================
    2) CATEGORY → PIN COLOR MAP
@@ -598,8 +643,10 @@ document.getElementById("resetMap").onclick = ()=>{
 ============================================================ */
 const tabBar = document.getElementById("tabBar");
 const eventSection = document.getElementById("eventSection");
+  
+  DATA["Gallery"] = DATA["Gallery"] || [];
 
-Object.keys(DATA).forEach((category,i)=>{
+  Object.keys(DATA).forEach((category,i)=>{
 
   /* TABS */
   const tab = document.createElement("button");
@@ -611,14 +658,29 @@ Object.keys(DATA).forEach((category,i)=>{
   tabBar.appendChild(tab);
 
   /* GROUPS */
-  const group = document.createElement("div");
-  group.className = "group";
-  group.id = "group-"+category;
-  if(i===0) group.classList.add("active");
-  eventSection.appendChild(group);
+const group = document.createElement("div");
+group.className = "group";
+group.id = "group-"+category;
+if(i===0) group.classList.add("active");
+
+if (category === "Gallery") group.classList.add("gallery-grid");  // ⭐ REQUIRED ⭐
+
+eventSection.appendChild(group);
 
   /* EVENT CARDS */
   DATA[category].forEach((ev, index)=>{
+    if(category === "Gallery"){
+    const imgCard = document.createElement("div");
+    imgCard.className = "gallery-item";
+    imgCard.innerHTML = `
+      <img src="${ev.img}" alt="Gallery Image">
+      <div class="caption">${ev.caption}</div>
+    `;
+    imgCard.onclick = ()=> window.open(ev.img, "_blank");
+    group.appendChild(imgCard);
+    return;
+}
+
     const card = document.createElement("div");
     card.className = "event-card";
     card.style.animationDelay = (index * 0.07) + "s";
@@ -635,7 +697,8 @@ Object.keys(DATA).forEach((category,i)=>{
     group.appendChild(card);
   });
 
-}); // <-- IMPORTANT FIX 🔥
+});
+  // <-- IMPORTANT FIX 🔥
 
 /* ============================================================
    5) PIN CREATION (SVG CLONING)
@@ -667,14 +730,20 @@ function createPin(color){
 
 const markers = [];
 
+
 Object.keys(DATA).forEach(cat=>{
+  // Skip categories that don't have map coords (Gallery)
+  if(cat === "Gallery") return;
+
   DATA[cat].forEach(ev=>{
-    const pin = createPin(PIN_COLOR[cat]);
-    const m = L.marker([ev.lat,ev.lng],{icon:pin}).addTo(map);
+    if (typeof ev.lat !== "number" || typeof ev.lng !== "number") return; // safety
+    const pin = createPin(PIN_COLOR[cat]); // missing color will default to red inside createPin
+    const m = L.marker([ev.lat, ev.lng], { icon: pin }).addTo(map);
     m.bindPopup(`<b>${ev.title}</b><br>${ev.city}, ${ev.country}`);
-    markers.push({m,cat,ev});
+    markers.push({ m, cat, ev });
   });
 });
+
 
 /* ============================================================
    6) TAB LOGIC
@@ -825,6 +894,7 @@ if("serviceWorker" in navigator){
 </script>
 </body>
 </html>
+
 
 
 
