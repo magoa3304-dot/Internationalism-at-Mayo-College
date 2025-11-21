@@ -690,17 +690,19 @@ const DATA = {
    2) CATEGORY → PIN COLOR MAP
 ============================================================ */
 const PIN_COLOR = {
-  "Sports":"red",
-  "Sports Collaboration with Round Square":"orange",
-  "Round Square":"green",
-  "Exchanges":"white",
-  "Insightful Expeditions":"blue",
-  "World Scholars' Cup":"purple",
-  "Model United Nations":"cyan",
-  "Fests and Camps":"pink",
-  "Drama":"yellow",
-  "Trek":"black"
+  "Gallery": null,
+  "Sports": "red",
+  "Sports Collaboration with Round Square": "orange",
+  "Round Square": "green",
+  "Exchanges": "white",
+  "Insightful Expeditions": "blue",
+  "World Scholars' Cup": "purple",
+  "Model United Nations": "cyan",
+  "Fests and Camps": "pink",
+  "Drama": "yellow",
+  "Trek": "black"
 };
+
 
 
 /* ============================================================
@@ -857,9 +859,17 @@ function activateTab(cat) {
   tabBar.scrollTo({ left: offset, behavior: "smooth" });
 
   // scroll map into view
-  document.getElementById("map").scrollIntoView({ behavior: "smooth" });
+  // Handle gallery mode
+if (cat === "Gallery") {
+  document.body.classList.add("gallery-open");
+} else {
+  document.body.classList.remove("gallery-open");
 
+  // Only scroll if map is visible
+  document.getElementById("map").scrollIntoView({ behavior: "smooth" });
   resetMap();
+}
+
 
   // highlight active tab
   document.querySelectorAll(".tab").forEach(t => {
@@ -1005,6 +1015,7 @@ if("serviceWorker" in navigator){
 </script>
 </body>
 </html>
+
 
 
 
